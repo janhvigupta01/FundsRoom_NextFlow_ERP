@@ -1,0 +1,124 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  passwordHash   String
+  name           String
+  role           String          // ADMIN, SALES, WAREHOUSE, ACCOUNTS
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  challans       SalesChallan[]
+  stockMovements StockMovement[]
+  customerNotes  CustomerNote[]
+}
+
+model Customer {
+  id           String         @id @default(uuid())
+  name         String
+  mobile       String
+  email        String
+  businessName String
+  gstNumber    String?
+  customerType String         // RETAIL, WHOLESALE, DISTRIBUTOR
+  address      String
+  status       String         @default("ACTIVE") // LEAD, ACTIVE, INACTIVE
+  followUpDate DateTime?
+  notes        String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  followUpLogs CustomerNote[]
+  challans     SalesChallan[]
+  invoices     Invoice[]
+}
+
+model CustomerNote {
+  id         String   @id @default(uuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  note       String
+  createdById String
+  createdBy  User     @relation(fields: [createdById], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Product {
+  id             String          @id @default(uuid())
+  name           String
+  sku            String          @unique
+  category       String
+  unitPrice      Float
+  currentStock   Int             @default(0)
+  minStockAlert  Int             @default(10)
+  location       String          // e.g. "Rack A-12, Main Warehouse"
+  imageUrl       String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  stockMovements StockMovement[]
+  challanItems   SalesChallanItem[]
+}
+
+model StockMovement {
+  id          String   @id @default(uuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity    Int
+  movementType String  // IN, OUT
+  reason      String   // e.g. "Purchase Receipt", "Sales Challan Dispatch", "Damaged Adjustment", "Manual Stock IN"
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model SalesChallan {
+  id            String             @id @default(uuid())
+  challanNumber String             @unique
+  customerId    String
+  customer      Customer           @relation(fields: [customerId], references: [id])
+  totalQuantity Int
+  totalAmount   Float              @default(0.0)
+  status        String             @default("DRAFT") // DRAFT, CONFIRMED, CANCELLED
+  createdById   String
+  createdBy     User               @relation(fields: [createdById], references: [id])
+  notes         String?
+  confirmedAt   DateTime?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  items         SalesChallanItem[]
+  invoices      Invoice[]
+}
+
+model SalesChallanItem {
+  id              String       @id @default(uuid())
+  challanId       String
+  challan         SalesChallan @relation(fields: [challanId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product      @relation(fields: [productId], references: [id])
+  productSnapshot String       // JSON string storing name, sku, category, unitPrice, location at time of creation
+  quantity        Int
+  unitPrice       Float
+  totalPrice      Float
+}
+
+model Invoice {
+  id            String       @id @default(uuid())
+  invoiceNumber String       @unique
+  challanId     String
+  challan       SalesChallan @relation(fields: [challanId], references: [id])
+  customerId    String
+  customer      Customer     @relation(fields: [customerId], references: [id])
+  subTotal      Float
+  taxAmount     Float        @default(0.0)
+  grandTotal    Float
+  status        String       @default("PENDING") // PENDING, PAID, CANCELLED
+  dueDate       DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}

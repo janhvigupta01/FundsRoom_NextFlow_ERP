@@ -1,0 +1,260 @@
+{
+  "info": {
+    "name": "NexFlow Mini ERP + CRM Portal APIs",
+    "_postman_id": "9a7f31a2-1d54-4a58-bf88-12d8a4f91e01",
+    "description": "Production REST API collection for NexFlow Mini ERP + CRM wholesale operations portal.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    console.log('JWT Token saved to collection variable');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@erp.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login (Sales Role)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sales@erp.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Current User Profile (/auth/me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        },
+        {
+          "name": "Get Demo Test Accounts",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/auth/demo-accounts", "host": ["{{baseUrl}}"], "path": ["auth", "demo-accounts"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Customer CRM Module",
+      "item": [
+        {
+          "name": "List Customers (Paginated & Filterable)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/customers?page=1&limit=10&search=&status=ALL&customerType=ALL",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "" },
+                { "key": "status", "value": "ALL" },
+                { "key": "customerType", "value": "ALL" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ramesh Patel\",\n  \"mobile\": \"+91 99887 66554\",\n  \"email\": \"ramesh@zenithlogistics.com\",\n  \"businessName\": \"Zenith Supply Chain Solutions\",\n  \"gstNumber\": \"24AAFCZ8899K1Z4\",\n  \"customerType\": \"DISTRIBUTOR\",\n  \"address\": \"Plot 108, GIDC Industrial Estate, Vatva, Ahmedabad, GJ 382445\",\n  \"status\": \"ACTIVE\",\n  \"followUpDate\": \"2026-08-15\",\n  \"notes\": \"Large scale regional distributor requiring monthly bulk deliveries.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/customers", "host": ["{{baseUrl}}"], "path": ["customers"] }
+          }
+        },
+        {
+          "name": "Add Follow-up Note to Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"Discussed Q3 distributor rebate structure. Client requested 5% additional discount on orders > $15k.\",\n  \"followUpDate\": \"2026-08-18\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/customers/CUSTOMER_ID_HERE/notes", "host": ["{{baseUrl}}"], "path": ["customers", "CUSTOMER_ID_HERE", "notes"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Product & Inventory Module",
+      "item": [
+        {
+          "name": "List Products (with Stock & Low Stock filter)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/products?page=1&limit=15&search=&category=ALL&lowStock=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "15" },
+                { "key": "search", "value": "" },
+                { "key": "category", "value": "ALL" },
+                { "key": "lowStock", "value": "false" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Product SKU",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cordless Brushless Impact Wrench 20V\",\n  \"sku\": \"PWR-WRC-20V\",\n  \"category\": \"Power Tools\",\n  \"unitPrice\": 189.50,\n  \"currentStock\": 30,\n  \"minStockAlert\": 10,\n  \"location\": \"Warehouse A - Bay 06, Shelf C\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] }
+          }
+        },
+        {
+          "name": "Adjust Stock (IN / OUT with Ledger Reason)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 15,\n  \"movementType\": \"IN\",\n  \"reason\": \"Supplier Shipment Receipt PO-2026-0810 Batch #44\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/products/PRODUCT_ID_HERE/stock", "host": ["{{baseUrl}}"], "path": ["products", "PRODUCT_ID_HERE", "stock"] }
+          }
+        },
+        {
+          "name": "Get Stock Movement Audit Trail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/products/movements/log?page=1&limit=20&movementType=ALL", "host": ["{{baseUrl}}"], "path": ["products", "movements", "log"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Sales Challan Module",
+      "item": [
+        {
+          "name": "List Sales Challans",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/challans?page=1&limit=10&status=ALL", "host": ["{{baseUrl}}"], "path": ["challans"] }
+          }
+        },
+        {
+          "name": "Create Confirmed Sales Challan (Transactional Stock Deduction)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"CUSTOMER_ID_HERE\",\n  \"status\": \"CONFIRMED\",\n  \"notes\": \"Urgent morning dispatch via Express Logistics\",\n  \"items\": [\n    {\n      \"productId\": \"PRODUCT_ID_HERE\",\n      \"quantity\": 2,\n      \"unitPrice\": 125.00\n    }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/challans", "host": ["{{baseUrl}}"], "path": ["challans"] }
+          }
+        },
+        {
+          "name": "Download PDF Challan Voucher",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/challans/CHALLAN_ID_HERE/pdf", "host": ["{{baseUrl}}"], "path": ["challans", "CHALLAN_ID_HERE", "pdf"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Invoices & Dashboard",
+      "item": [
+        {
+          "name": "List Invoices",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/invoices", "host": ["{{baseUrl}}"], "path": ["invoices"] }
+          }
+        },
+        {
+          "name": "Get Dashboard Operational KPIs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/dashboard/stats", "host": ["{{baseUrl}}"], "path": ["dashboard", "stats"] }
+          }
+        }
+      ]
+    }
+  ]
+}
