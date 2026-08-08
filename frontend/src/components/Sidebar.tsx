@@ -58,18 +58,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
         })}
       </nav>
 
-      <div className="sidebar-footer">
-        <div className="user-card">
-          <div className="user-avatar">
-            {user?.name.charAt(0).toUpperCase()}
-          </div>
-          <div className="user-info">
-            <span className="user-name">{user?.name.split(' ')[0]}</span>
-            <span className="user-role-badge">{user?.role}</span>
+      <div className="sidebar-footer" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'stretch' }}>
+        <div className="user-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div className="user-avatar">
+              {user?.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="user-info">
+              <span className="user-name">{user?.name.split(' ')[0]}</span>
+              <span className="user-role-badge">{user?.role}</span>
+            </div>
           </div>
         </div>
-        <button className="btn btn-secondary btn-icon" onClick={logout} title="Sign Out">
-          <LogOut size={16} />
+        <button
+          className="btn btn-secondary btn-sm"
+          onClick={logout}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#ef4444', borderColor: '#fecaca', background: '#fef2f2' }}
+        >
+          <LogOut size={15} /> Sign Out / Logout
         </button>
       </div>
     </aside>

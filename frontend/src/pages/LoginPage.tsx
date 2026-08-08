@@ -35,10 +35,9 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const quickLogin = (roleEmail: string) => {
+  const selectRole = (roleEmail: string) => {
     setEmail(roleEmail);
     setPassword('password123');
-    handleLogin(undefined, roleEmail, 'password123');
   };
 
   return (
@@ -167,17 +166,18 @@ export const LoginPage: React.FC = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
               <button
                 type="button"
-                onClick={() => quickLogin('admin@erp.com')}
+                onClick={() => selectRole('admin@erp.com')}
                 style={{
                   padding: '0.6rem 0.75rem',
                   background: email === 'admin@erp.com' ? '#4f46e5' : 'rgba(255, 255, 255, 0.05)',
                   color: 'white',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  border: email === 'admin@erp.com' ? '2px solid #818cf8' : '1px solid rgba(255, 255, 255, 0.1)',
                   borderRadius: '8px',
                   fontSize: '0.775rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  textAlign: 'left'
+                  textAlign: 'left',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 👑 <strong>Admin</strong>
@@ -186,17 +186,18 @@ export const LoginPage: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => quickLogin('sales@erp.com')}
+                onClick={() => selectRole('sales@erp.com')}
                 style={{
                   padding: '0.6rem 0.75rem',
                   background: email === 'sales@erp.com' ? '#4f46e5' : 'rgba(255, 255, 255, 0.05)',
                   color: 'white',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  border: email === 'sales@erp.com' ? '2px solid #818cf8' : '1px solid rgba(255, 255, 255, 0.1)',
                   borderRadius: '8px',
                   fontSize: '0.775rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  textAlign: 'left'
+                  textAlign: 'left',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 💼 <strong>Sales</strong>
@@ -205,17 +206,18 @@ export const LoginPage: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => quickLogin('warehouse@erp.com')}
+                onClick={() => selectRole('warehouse@erp.com')}
                 style={{
                   padding: '0.6rem 0.75rem',
                   background: email === 'warehouse@erp.com' ? '#4f46e5' : 'rgba(255, 255, 255, 0.05)',
                   color: 'white',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  border: email === 'warehouse@erp.com' ? '2px solid #818cf8' : '1px solid rgba(255, 255, 255, 0.1)',
                   borderRadius: '8px',
                   fontSize: '0.775rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  textAlign: 'left'
+                  textAlign: 'left',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 📦 <strong>Warehouse</strong>
@@ -224,17 +226,18 @@ export const LoginPage: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => quickLogin('accounts@erp.com')}
+                onClick={() => selectRole('accounts@erp.com')}
                 style={{
                   padding: '0.6rem 0.75rem',
                   background: email === 'accounts@erp.com' ? '#4f46e5' : 'rgba(255, 255, 255, 0.05)',
                   color: 'white',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  border: email === 'accounts@erp.com' ? '2px solid #818cf8' : '1px solid rgba(255, 255, 255, 0.1)',
                   borderRadius: '8px',
                   fontSize: '0.775rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  textAlign: 'left'
+                  textAlign: 'left',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🧾 <strong>Accounts</strong>

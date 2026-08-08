@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
@@ -9,7 +9,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ title, subtitle, actions }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <header className="navbar">
@@ -27,6 +27,14 @@ export const Navbar: React.FC<NavbarProps> = ({ title, subtitle, actions }) => {
             Logged in as <strong style={{ color: '#4f46e5' }}>{user?.role}</strong> ({user?.name})
           </span>
         </div>
+
+        <button
+          className="btn btn-secondary btn-sm"
+          onClick={logout}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#dc2626', borderColor: '#fecaca', background: '#fff5f5', fontSize: '0.8rem', fontWeight: 600 }}
+        >
+          <LogOut size={14} /> Logout
+        </button>
       </div>
     </header>
   );
