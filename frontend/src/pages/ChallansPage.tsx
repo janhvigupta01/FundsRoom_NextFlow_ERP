@@ -216,25 +216,24 @@ export const ChallansPage: React.FC<{ setCurrentTab?: (tab: string) => void }> =
     }
   };
 
-  const handleDownloadPDF = (id: string, challanNumber: string) => {
-    const token = localStorage.getItem('erp_token');
-    fetch(`/api/challans/${id}/pdf`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then((res) => res.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${challanNumber}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        success(`Downloaded official dispatch PDF for ${challanNumber}`);
-      })
-      .catch(() => error('Failed to download PDF'));
+  const handleDownloadPDF = async (id: string, challanNumber: string) => {
+    try {
+      const response = await api.get(`/challans/${id}/pdf`, {
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${challanNumber}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      success(`Downloaded official dispatch PDF for ${challanNumber}`);
+    } catch {
+      error('Failed to download PDF');
+    }
   };
 
   const handleGenerateInvoice = async (challan: SalesChallan) => {
